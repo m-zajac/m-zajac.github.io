@@ -18,10 +18,18 @@
             <div class="row">
                 <textarea id="input" class="json2go" cols="30" rows="10" placeholder="Paste json here"></textarea>
             </div>
+        
             <div class="row">
-                <label class="card is-center">
-                    <input id="extractCommon" class="json2go" type="checkbox" checked="true" />
+                <label class="col-3 row card is-center">
+                    <input id="rootName" class="json2go" type="text" placeholder="Root name" />
+                </label>
+                <label class="col-3 card is-center">
+                    <input id="extractCommonTypes" class="json2go" type="checkbox" checked="true" />
                     Extract common types
+                </label>
+                <label class="col-6 card is-text-center">
+                    <input id="stringPointersWhenKeyMissing" class="json2go" type="checkbox" checked="true" />
+                    String pointers when key is missing
                 </label>
             </div>
             <div class="row">
@@ -50,8 +58,12 @@
 
                 let onChange = () => {
                     let json = document.getElementById("input").value;
+                    let rootName = document.getElementById("rootName").value || "Document";
+
                     let opts = {
-                        extractCommonTypes: document.getElementById("extractCommon").checked,
+                        extractCommonTypes: document.getElementById("extractCommonTypes").checked,
+                        stringPointersWhenKeyMissing: document.getElementById("stringPointersWhenKeyMissing").checked,
+                        rootName: rootName,
                     };
                     let out = json2go(json, opts);
 
