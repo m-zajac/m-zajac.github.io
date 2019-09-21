@@ -1,86 +1,171 @@
 <html>
-	<head>
-        <meta charset="utf-8">
-        
-        <title>json2go web parser</title>
-        <link rel="stylesheet" href="https://unpkg.com/chota@latest">
-	</head>
-	<body>
-        <div class="container">
-            <h1>json2go web parser</h1>
 
-            <div class="row">
-                <p>
-                    For source code see <a href="https://github.com/m-zajac/json2go">https://github.com/m-zajac/json2go</a>
-                </p>
-            </div>
+<head>
+    <meta charset="utf-8">
+    <title>json2go web parser</title>
 
-            <div class="row">
-                <textarea id="input" class="json2go" cols="30" rows="10" placeholder="Paste json here"></textarea>
-            </div>
-        
-            <div class="row">
-                <label class="col-4 row card is-center">
-                    <input id="rootName" class="json2go" type="text" placeholder="Root name" />
-                </label>
-                <label class="col-4 card is-center">
-                    <input id="extractCommonTypes" class="json2go" type="checkbox" checked="true" />
-                    Extract common types
-                </label>
-                <label class="col-4 card is-center">
-                    <input id="stringPointersWhenKeyMissing" class="json2go" type="checkbox" checked="true" />
-                    String pointers when key is missing
-                </label>
-            </div>
-            <div class="row">
-                <pre id="output" class="is-full-width"></pre>
-            </div>
+    <link rel="stylesheet" href="https://unpkg.com/chota@latest">
+
+    <link href="jsoneditor/jsoneditor.min.css" rel="stylesheet" type="text/css">
+    <script src="jsoneditor/jsoneditor.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <h1>json2go web parser</h1>
+
+        <div class="row">
+            <p>
+                For source code see <a href="https://github.com/m-zajac/json2go">https://github.com/m-zajac/json2go</a>
+            </p>
         </div>
 
-        <script src="wasm_exec.js"></script>
-        <script>
-            if (!WebAssembly.instantiateStreaming) { // polyfill
-                WebAssembly.instantiateStreaming = async (resp, importObject) => {
-                    const source = await (await resp).arrayBuffer();
-                    return await WebAssembly.instantiate(source, importObject);
-                };
-            }
-    
-            const go = new Go();
-            let mod, inst;
-            WebAssembly.instantiateStreaming(fetch("json2go.wasm"), go.importObject).then((result) => {
-                mod = result.module;
-                inst = result.instance;
-                go.run(inst);
-            }).then(() => {
-                let waitMsg = "waiting for valid json ...";
-                let outEl = document.getElementById("output");
+        <div class="row">
+            <div class="col-10">
+                <input id="url" type="input" style="width: 100%;" placeholder="Load json from url"/>
+            </div>
+            <div class="col-2">
+                <a class="button primary" id="loadurl">Load url</a>
+            </div>
+        </div>
+        <div class="row">
+            <label class="col-4 row card is-center">
+                <input id="rootName" class="json2go" type="text" placeholder="Root name" />
+            </label>
+            <label class="col-4 card is-center">
+                <input id="extractCommonTypes" class="json2go" type="checkbox" checked="true" />
+                Extract common types
+            </label>
+            <label class="col-4 card is-center">
+                <input id="stringPointersWhenKeyMissing" class="json2go" type="checkbox" checked="true" />
+                String pointers when key is missing
+            </label>
+        </div>
+        <div class="row">
+            <small>Use Ctrl+\ to format json</small>
+        </div>        
+        <div class="row">
+            <div id="editor" style="width: 100%; height: 400px;"></div>
+        </div>
+        <div class="row">
+            <pre id="output" class="is-full-width"></pre>
+        </div>
+    </div>
 
-                let onChange = () => {
-                    let json = document.getElementById("input").value;
-                    let rootName = document.getElementById("rootName").value || "Document";
+    <script src="wasm_exec.js"></script>
+    <script>
+        if (!WebAssembly.instantiateStreaming) { // polyfill
+            WebAssembly.instantiateStreaming = async (resp, importObject) => {
+                const source = await (await resp).arrayBuffer();
+                return await WebAssembly.instantiate(source, importObject);
+            };
+        }
 
-                    let opts = {
-                        extractCommonTypes: document.getElementById("extractCommonTypes").checked,
-                        stringPointersWhenKeyMissing: document.getElementById("stringPointersWhenKeyMissing").checked,
-                        rootName: rootName,
-                    };
-                    let out = json2go(json, opts);
-
-                    if (out) {
-                        outEl.innerHTML = out;
-                    } else {
-                        outEl.innerHTML = waitMsg;
+        const go = new Go();
+        let mod, inst;
+        WebAssembly.instantiateStreaming(fetch("json2go.wasm"), go.importObject).then((result) => {
+            mod = result.module;
+            inst = result.instance;
+            go.run(inst);
+        }).then(() => {
+            let onChange = () => { };
+            const container = document.getElementById("editor");
+            const options = {
+                "mode": "code",
+                "mainMenuBar": false,
+                "onChange": () => {
+                    onChange();
+                },
+            };
+            const editor = new JSONEditor(container, options);
+            editor.set([
+                {
+                    "name": "water",
+                    "description": "quite common on earth",
+                    "type": "liquid",
+                    "boiling_point": {
+                        "units": "C",
+                        "value": 100
+                    }
+                },
+                {
+                    "name": "oxygen",
+                    "type": "gas",
+                    "density": {
+                        "units": "g/L",
+                        "value": 1.429
+                    }
+                },
+                {
+                    "name": "carbon monoxide",
+                    "type": "gas",
+                    "dangerous": true,
+                    "boiling_point": {
+                        "units": "C",
+                        "value": -191.5
+                    },
+                    "density": {
+                        "units": "kg/m3",
+                        "value": 789
                     }
                 }
-                for (let el of document.getElementsByClassName("json2go")) {
-                    el.addEventListener("input", onChange);
-                    el.addEventListener("change", onChange);
+            ]);
+
+            const waitMsg = "waiting for valid json ...";
+            const outEl = document.getElementById("output");
+
+            onChange = () => {
+                let json = editor.getText();
+                let rootName = document.getElementById("rootName").value || "Document";
+
+                let opts = {
+                    extractCommonTypes: document.getElementById("extractCommonTypes").checked,
+                    stringPointersWhenKeyMissing: document.getElementById("stringPointersWhenKeyMissing").checked,
+                    rootName: rootName,
+                };
+                let out = json2go(json, opts);
+
+                if (out) {
+                    outEl.innerHTML = out;
+                } else {
+                    outEl.innerHTML = waitMsg;
                 }
-                onChange();
-            }).catch((err) => {
-                console.error(err);
-            });
-        </script>
-    </body>
+            }
+            for (let el of document.getElementsByClassName("json2go")) {
+                el.addEventListener("change", onChange);
+            }
+            onChange();
+
+            // load from url
+            let loadOk = () => {
+                document.getElementById("loadurl").classList.remove("error");
+                document.getElementById("loadurl").classList.add("primary");
+            }
+            let loadErr = () => {
+                document.getElementById("loadurl").classList.add("error");
+                document.getElementById("loadurl").classList.remove("primary");
+            }
+            document.getElementById("loadurl").addEventListener("click", () => {
+                const url = document.getElementById("url").value;
+
+                fetch(url).then((response) => {
+                    response.json().then((json) => {
+                        editor.set(json);
+                        loadOk();
+                        onChange();
+                    }).catch((err) => {
+                        loadErr();
+                        console.error(err);
+                    });
+                }).catch((err) => {
+                    console.error(err);
+                    loadErr();
+                })
+            })
+        }).catch((err) => {
+            console.error(err);
+        });
+    </script>
+</body>
+
 </html>
