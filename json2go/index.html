@@ -1,56 +1,115 @@
-<html>
+<!DOCTYPE html>
 
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- <link rel="icon" href="../../../../favicon.ico"> -->
+
     <title>json2go web parser</title>
 
-    <link rel="stylesheet" href="https://unpkg.com/chota@latest">
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 
     <link href="jsoneditor/jsoneditor.min.css" rel="stylesheet" type="text/css">
     <script src="jsoneditor/jsoneditor.min.js"></script>
 </head>
 
-<body>
-    <div class="container">
-        <h1>json2go web parser</h1>
+<body class="bg-light">
+    <div class="container-fluid">
+        <div class="py-5">
+            <div class="row justify-content-center">
+                <div class="col-md-auto align-self-center">
+                    <img class="mx-4" src="gopher.svg" alt="" height="128">
+                </div>
 
-        <div class="row">
-            <p>
-                For source code see <a href="https://github.com/m-zajac/json2go">https://github.com/m-zajac/json2go</a>
-            </p>
+                <div class="col-md-auto">
+                    <h1 class="display-3">json2go web parser</h1>
+                    <p class="lead">
+                        Paste json to generate go struct.<br/>
+                        If you want to use this in your code, json2go can be imported as a go package.<br/>
+                        For source code and more details see <a href="https://github.com/m-zajac/json2go">https://github.com/m-zajac/json2go</a>
+                    </p>
+                </div>
+            </div>
         </div>
 
-        <div class="row">
-            <div class="col-10">
-                <input id="url" type="input" style="width: 100%;" placeholder="Load json from url"/>
+        <form class="px-5">
+            <div class="form-group row">
+                <label for="url" class="col-2 col-form-label">Load JSON from URL</label>
+                <div class="col-10">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">
+                                <i class="fa fa-address-card">URL</i>
+                            </div>
+                        </div>
+                        <input id="url" type="text" class="form-control">
+                        <button type="button" class="btn btn-primary" id="loadurl">Load</button>
+                    </div>
+                </div>
             </div>
-            <div class="col-2">
-                <a class="button primary" id="loadurl">Load url</a>
+            
+            <hr/>
+            
+            <div class="form-group row">
+                <label class="col-2 col-form-label">Options</label>
+                <div class="col-10">
+                    <div class="custom-controls-stacked">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text">
+                                    <i class="fa fa-address-card">Root name</i>
+                                </div>
+                            </div>
+                            <input id="rootName" class="form-control json2go" type="text" value="Document"/>
+                        </div>
+                    </div>
+
+                    <div class="custom-controls-stacked">
+                        <div class="custom-control custom-checkbox">
+                            <input id="extractCommonTypes" name="checkbox" id="checkbox_0" type="checkbox" checked="checked"
+                                class="json2go custom-control-input" value="rabbit">
+                            <label for="extractCommonTypes" class="custom-control-label">Extract common types</label>
+                        </div>
+                    </div>
+                    <div class="custom-controls-stacked">
+                        <div class="custom-control custom-checkbox">
+                            <input name="checkbox" id="stringPointersWhenKeyMissing" type="checkbox" class="json2go custom-control-input"
+                                value="duck" checked="checked">
+                            <label for="stringPointersWhenKeyMissing" class="custom-control-label">
+                                String pointers when key is missing
+                            </label>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-        <div class="row">
-            <label class="col-4 row card is-center">
-                <input id="rootName" class="json2go" type="text" placeholder="Root name" />
-            </label>
-            <label class="col-4 card is-center">
-                <input id="extractCommonTypes" class="json2go" type="checkbox" checked="true" />
-                Extract common types
-            </label>
-            <label class="col-4 card is-center">
-                <input id="stringPointersWhenKeyMissing" class="json2go" type="checkbox" checked="true" />
-                String pointers when key is missing
-            </label>
-        </div>
-        <div class="row">
-            <small>Use Ctrl+\ to format json</small>
-        </div>        
-        <div class="row">
-            <div id="editor" style="width: 100%; height: 400px;"></div>
-        </div>
-        <div class="row">
-            <pre id="output" class="is-full-width"></pre>
-        </div>
-    </div>
+
+            <hr/>
+
+            <div class="form-group row">
+                <label for="editor" class="col-2 col-form-label">JSON input</label>
+                <div class="col-10">
+                    <div id="editor" style="height: 400px;"></div>
+                </div>
+            </div>
+
+            <hr/>
+
+            <div class="form-group row">
+                <label for="output" class="col-2 col-form-label">Output</label>
+                <div class="col-10">
+                    <pre id="output" class="font-weight-bold">sasdfsdf</pre>
+                </div>
+            </div>
+        </form>
+
+        <footer class="text-secondary font-weight-light text-right py-3">
+            Thanks to <a href="https://github.com/MariaLetta/free-gophers-pack">Maria Letta</a> for awesome gopher image! :)
+        </footer>
+    </div> <!-- /container -->
 
     <script src="wasm_exec.js"></script>
     <script>
@@ -167,5 +226,4 @@
         });
     </script>
 </body>
-
 </html>
