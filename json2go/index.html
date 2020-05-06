@@ -60,7 +60,7 @@
             <div class="form-group row">
                 <label class="col-2 col-form-label">Options</label>
                 <div class="col-10">
-                    <div class="custom-controls-stacked">
+                    <div class="">
                         <div class="input-group">
                             <div class="input-group-prepend">
                                 <div class="input-group-text">
@@ -71,20 +71,31 @@
                         </div>
                     </div>
 
-                    <div class="custom-controls-stacked">
-                        <div class="custom-control custom-checkbox">
-                            <input id="extractCommonTypes" name="checkbox" id="checkbox_0" type="checkbox" checked="checked"
-                                class="json2go custom-control-input" value="rabbit">
-                            <label for="extractCommonTypes" class="custom-control-label">Extract common types</label>
+                    <div class="mt-1">
+                        <div class="form-check-inline">
+                            <div class="custom-control custom-checkbox">
+                                <input id="extractCommonTypes" name="checkbox" id="checkbox_0" type="checkbox" checked="checked"
+                                    class="json2go custom-control-input" value="rabbit">
+                                <label for="extractCommonTypes" class="custom-control-label">Extract common types</label>
+                            </div>
                         </div>
-                    </div>
-                    <div class="custom-controls-stacked">
-                        <div class="custom-control custom-checkbox">
-                            <input name="checkbox" id="stringPointersWhenKeyMissing" type="checkbox" class="json2go custom-control-input"
-                                value="duck" checked="checked">
-                            <label for="stringPointersWhenKeyMissing" class="custom-control-label">
-                                String pointers when key is missing
-                            </label>
+                        <div class="form-check-inline">
+                            <div class="custom-control custom-checkbox">
+                                <input name="checkbox" id="stringPointersWhenKeyMissing" type="checkbox" class="json2go custom-control-input"
+                                    value="duck" checked="checked">
+                                <label for="stringPointersWhenKeyMissing" class="custom-control-label">
+                                    String pointers when key is missing
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-check-inline">
+                            <div class="custom-control custom-checkbox">
+                                <input name="checkbox" id="skipEmptyKeys" type="checkbox" class="json2go custom-control-input"
+                                    value="duck" checked="checked">
+                                <label for="skipEmptyKeys" class="custom-control-label">
+                                    Skip keys with only null values
+                                </label>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -148,7 +159,8 @@
                     "boiling_point": {
                         "units": "C",
                         "value": 100
-                    }
+                    },
+                    "extra_info": null
                 },
                 {
                     "name": "oxygen",
@@ -169,7 +181,8 @@
                     "density": {
                         "units": "kg/m3",
                         "value": 789
-                    }
+                    },
+                    "extra_info": null
                 }
             ]);
 
@@ -181,9 +194,10 @@
                 let rootName = document.getElementById("rootName").value || "Document";
 
                 let opts = {
+                    rootName: rootName,
                     extractCommonTypes: document.getElementById("extractCommonTypes").checked,
                     stringPointersWhenKeyMissing: document.getElementById("stringPointersWhenKeyMissing").checked,
-                    rootName: rootName,
+                    skipEmptyKeys: document.getElementById("skipEmptyKeys").checked,
                 };
                 let out = json2go(json, opts);
 
