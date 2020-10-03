@@ -113,6 +113,15 @@
                             </label>
                         </div>
                     </div>
+
+                    <div class="input-group mb-2 mr-sm-3">
+                        <div class="form-check">
+                            <input name="checkbox" id="timeAsStr" type="checkbox" class="json2go form-check-input">
+                            <label for="timeAsStr" class="form-check-label">
+                                Don't use time.Time, just strings
+                            </label>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -168,6 +177,7 @@
             const editor = new JSONEditor(container, options);
             editor.set([
                 {
+                    "created": "2020-10-03T15:04:05Z",
                     "name": "water",
                     "description": "quite common on earth",
                     "type": "liquid",
@@ -184,6 +194,7 @@
                     }
                 },
                 {
+                    "created": "2020-10-03T15:05:02Z",
                     "name": "oxygen",
                     "type": "gas",
                     "density": {
@@ -198,6 +209,7 @@
                     }
                 },
                 {
+                    "created": "2020-10-03T17:12:37Z",
                     "name": "carbon monoxide",
                     "type": "gas",
                     "dangerous": true,
@@ -232,6 +244,7 @@
                     skipEmptyKeys: document.getElementById("skipEmptyKeys").checked,
                     useMaps: document.getElementById("useMaps").checked,
                     useMapsMinAttrs: document.getElementById("useMapsMinAttrs").value,
+                    timeAsStr: document.getElementById("timeAsStr").checked,
                 };
                 let out = json2go(json, opts);
 
